@@ -70,6 +70,13 @@ public class BialystokEventServiceImpl implements BialystokEventService {
         return false;
     }
 
+    private String sanitizeForPdf(String input) {
+        if (input == null) return "";
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+        normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return normalized.replaceAll("ł", "l").replaceAll("Ł", "L");
+    }
+
     @Override
     public DataHandler getEventSummaryPdf() {
         try (PDDocument document = new PDDocument()) {
@@ -95,7 +102,7 @@ public class BialystokEventServiceImpl implements BialystokEventService {
                         break;
                     }
                     String text = "- " + event.getName() + " (" + event.getDate() + ")";
-                    contentStream.showText(text);
+                    contentStream.showText(sanitizeForPdf(text));
                     contentStream.newLineAtOffset(0, -20);
                     yOffset -= 20;
                 }
