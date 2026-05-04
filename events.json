@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "Koncert Muzyki Dawnej",
+        "type": "Kultura",
+        "date": "2024-05-10",
+        "week": 19,
+        "month": 5,
+        "year": 2024,
+        "description": "Koncert w Pałacu Branickich"
+    },
+    {
+        "id": 2,
+        "name": "Białostocki Bieg",
+        "type": "Sport",
+        "date": "2024-05-12",
+        "week": 19,
+        "month": 5,
+        "year": 2024,
+        "description": "Bieg na 10 km ulicami miasta"
+    },
+    {
+        "id": 3,
+        "name": "Festyn Rodzinny",
+        "type": "Rozrywka",
+        "date": "2026-05-10",
+        "week": 19,
+        "month": 5,
+        "year": 2026,
+        "description": "Festyn Rodzinny na Rynku Kosciuszki"
+    }
+]

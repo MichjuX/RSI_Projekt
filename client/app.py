@@ -31,7 +31,7 @@ def index():
         # Initial call to get events for a default week or all?
         # Actually, let's fetch all via some method, but we only have day, week, details.
         # Let's get events for the current week as default.
-        events = client.service.getEventsByWeek(week=19, year=2024)
+        events = client.service.getAllEvents()
         return render_template('index.html', events=events, error=None)
     except Exception as e:
         return render_template('index.html', events=[], error=str(e))

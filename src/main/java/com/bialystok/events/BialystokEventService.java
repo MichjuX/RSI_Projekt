@@ -54,6 +54,9 @@ public interface BialystokEventService {
     );
 
     @WebMethod
+    List<Event> getAllEvents();
+
+    @WebMethod
     @XmlMimeType("application/pdf")
     DataHandler getEventSummaryPdf();
 }

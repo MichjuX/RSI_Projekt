@@ -61,6 +61,11 @@ public class BialystokEventServiceImpl implements BialystokEventService {
     }
 
     @Override
+    public List<Event> getAllEvents() {
+        return new ArrayList<>(events);
+    }
+
+    @Override
     public List<Event> getEventsByDay(String date) {
         return events.stream()
                 .filter(e -> e.getDate().equals(date))

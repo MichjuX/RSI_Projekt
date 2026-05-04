@@ -4,7 +4,6 @@ target/
 *.jar
 *.iml
 *.log
-events.json
 /weather-service/.idea
 weather-service/.idea/compiler.xml
 .idea/compiler.xml
