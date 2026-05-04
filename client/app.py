@@ -4,6 +4,7 @@ from zeep.transports import Transport
 import requests
 import io
 import urllib3
+import os
 
 # Suppress insecure request warnings for self-signed certs
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -11,8 +12,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 app = Flask(__name__)
 
 # WSDL URL for the Java Web Service
-WSDL_URL = 'https://localhost:8443/ws/events?wsdl'
-WEATHER_WSDL_URL = 'http://localhost:8444/ws/weather?wsdl'
+WSDL_URL = os.getenv('EVENTS_WSDL_URL', 'https://localhost:8443/ws/events?wsdl')
+WEATHER_WSDL_URL = os.getenv('WEATHER_WSDL_URL', 'http://localhost:8444/ws/weather?wsdl')
 
 def get_soap_client():
     # Disable SSL verification for local self-signed certificate
@@ -144,4 +145,4 @@ def download_pdf():
 
 if __name__ == '__main__':
     # Running local dev server
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=5000)

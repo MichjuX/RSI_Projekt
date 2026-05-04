@@ -1,0 +1,23 @@
+services:
+  events-server:
+    build: .
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./events.json:/app/events.json
+
+  weather-service:
+    build: ./weather-service
+    ports:
+      - "8444:8444"
+
+  client:
+    build: ./client
+    ports:
+      - "5000:5000"
+    environment:
+      - EVENTS_WSDL_URL=https://events-server:8443/ws/events?wsdl
+      - WEATHER_WSDL_URL=http://weather-service:8444/ws/weather?wsdl
+    depends_on:
+      - events-server
+      - weather-service

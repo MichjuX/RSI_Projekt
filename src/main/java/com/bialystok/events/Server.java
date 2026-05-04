@@ -17,7 +17,7 @@ public class Server {
     public static void main(String[] args) {
         try {
             // 1. Setup HTTPS Server
-            HttpsServer httpsServer = HttpsServer.create(new InetSocketAddress("localhost", 8443), 0);
+            HttpsServer httpsServer = HttpsServer.create(new InetSocketAddress("0.0.0.0", 8443), 0);
             
             // 2. Load Keystore (for SSL/TLS - Additional point requirement)
             SSLContext sslContext = SSLContext.getInstance("TLS");
