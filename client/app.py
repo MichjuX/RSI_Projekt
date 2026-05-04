@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 # WSDL URL for the Java Web Service
 WSDL_URL = 'https://localhost:8443/ws/events?wsdl'
+WEATHER_WSDL_URL = 'http://localhost:8444/ws/weather?wsdl'
 
 def get_soap_client():
     # Disable SSL verification for local self-signed certificate
@@ -61,7 +62,15 @@ def event_details(id):
     try:
         client = get_soap_client()
         event = client.service.getEventDetails(id=id)
-        return render_template('details.html', event=event)
+
+        weather = None
+        try:
+            weather_client = Client(wsdl=WEATHER_WSDL_URL)
+            weather = weather_client.service.getWeatherForDate(date=event.date)
+        except Exception:
+            pass
+
+        return render_template('details.html', event=event, weather=weather)
     except Exception as e:
         return str(e)
 

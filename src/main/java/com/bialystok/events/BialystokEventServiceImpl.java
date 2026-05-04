@@ -1,5 +1,7 @@
 package com.bialystok.events;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -10,6 +12,9 @@ import javax.jws.WebService;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,13 +22,42 @@ import java.util.stream.Collectors;
 @WebService(endpointInterface = "com.bialystok.events.BialystokEventService")
 public class BialystokEventServiceImpl implements BialystokEventService {
 
-    private final List<Event> events = new ArrayList<>();
-    private int currentId = 1;
+    private static final Path DATA_FILE = Path.of("events.json");
+    private static final Gson GSON = new Gson();
+    private static final Type LIST_TYPE = new TypeToken<List<Event>>(){}.getType();
+
+    private List<Event> events;
+    private int currentId;
 
     public BialystokEventServiceImpl() {
-        // Initial dummy data
-        addEvent("Koncert Muzyki Dawnej", "Kultura", "2024-05-10", 19, 5, 2024, "Koncert w Pałacu Branickich");
-        addEvent("Białostocki Bieg", "Sport", "2024-05-12", 19, 5, 2024, "Bieg na 10 km ulicami miasta");
+        if (Files.exists(DATA_FILE)) {
+            try {
+                String json = Files.readString(DATA_FILE);
+                events = GSON.fromJson(json, LIST_TYPE);
+
+                int maxId = 0;
+                for (Event e : events) {
+                    if (e.getId() > maxId) {
+                        maxId = e.getId();
+                    }
+                }
+                currentId = maxId + 1;
+            } catch (IOException e) {
+                events = new ArrayList<>();
+                currentId = 1;
+            }
+        } else {
+            events = new ArrayList<>();
+            currentId = 1;
+        }
+    }
+
+    private void save() {
+        try {
+            Files.writeString(DATA_FILE, GSON.toJson(events));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -51,7 +85,9 @@ public class BialystokEventServiceImpl implements BialystokEventService {
     @Override
     public boolean addEvent(String name, String type, String date, int week, int month, int year, String description) {
         Event newEvent = new Event(currentId++, name, type, date, week, month, year, description);
-        return events.add(newEvent);
+        boolean result = events.add(newEvent);
+        save();
+        return result;
     }
 
     @Override
@@ -65,6 +101,7 @@ public class BialystokEventServiceImpl implements BialystokEventService {
             event.setMonth(month);
             event.setYear(year);
             event.setDescription(description);
+            save();
             return true;
         }
         return false;
@@ -96,11 +133,7 @@ public class BialystokEventServiceImpl implements BialystokEventService {
                 
                 int yOffset = 670;
                 for (Event event : events) {
-                    if (yOffset < 100) {
-                        contentStream.endText();
-                        // simplistic page breaking not implemented for brevity
-                        break;
-                    }
+                    if (yOffset < 100) break;
                     String text = "- " + event.getName() + " (" + event.getDate() + ")";
                     contentStream.showText(sanitizeForPdf(text));
                     contentStream.newLineAtOffset(0, -20);

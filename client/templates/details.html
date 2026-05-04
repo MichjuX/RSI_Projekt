@@ -9,6 +9,10 @@
     <a href="/" class="btn btn-secondary mb-3">&laquo; Powrót</a>
     
     <h2>Edycja Wydarzenia #{{ event.id }}</h2>
+
+    {% if weather %}
+    <div class="alert alert-info">Pogoda w dniu {{ event.date }}: <strong>{{ weather }}</strong></div>
+    {% endif %}
     
     <form action="/update/{{ event.id }}" method="post" class="card p-4">
         <div class="row mb-3">
