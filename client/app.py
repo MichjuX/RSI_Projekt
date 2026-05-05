@@ -10,7 +10,7 @@ from functools import wraps
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'bialystok-rsi-2024-secret')
+app.secret_key = os.getenv('SECRET_KEY', 'secret_key')
 
 WSDL_URL = os.getenv('EVENTS_WSDL_URL', 'https://localhost:8443/ws/events?wsdl')
 WEATHER_WSDL_URL = os.getenv('WEATHER_WSDL_URL', 'http://localhost:8444/ws/weather?wsdl')

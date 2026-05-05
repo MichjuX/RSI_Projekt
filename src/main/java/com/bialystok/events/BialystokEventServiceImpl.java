@@ -173,10 +173,9 @@ public class BialystokEventServiceImpl implements BialystokEventService {
     public boolean approveProposal(int id) {
         for (EventProposal p : proposals) {
             if (p.getId() == id) {
-                java.time.LocalDate d = java.time.LocalDate.parse(p.getDate());
-                int week = d.get(java.time.temporal.IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+                int[] wmy = weekMonthYear(p.getDate());
                 events.add(new Event(currentId++, p.getName(), p.getType(), p.getDate(),
-                        week, d.getMonthValue(), d.getYear(), p.getDescription()));
+                        wmy[0], wmy[1], wmy[2], p.getDescription()));
                 save();
                 proposals.remove(p);
                 saveProposals();
