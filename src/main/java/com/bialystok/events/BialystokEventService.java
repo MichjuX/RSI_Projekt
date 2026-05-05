@@ -10,48 +10,43 @@ import javax.xml.ws.soap.MTOM;
 import java.util.List;
 
 @WebService
-@MTOM
-@HandlerChain(file = "handlers.xml")
+@MTOM(threshold = 0)
+// @HandlerChain(file = "handlers.xml")
 public interface BialystokEventService {
 
     @WebMethod
     List<Event> getEventsByDay(
-        @WebParam(name = "date") String date
-    );
+            @WebParam(name = "date") String date);
 
     @WebMethod
     List<Event> getEventsByWeek(
-        @WebParam(name = "week") int week,
-        @WebParam(name = "year") int year
-    );
+            @WebParam(name = "week") int week,
+            @WebParam(name = "year") int year);
 
     @WebMethod
     Event getEventDetails(
-        @WebParam(name = "id") int id
-    );
+            @WebParam(name = "id") int id);
 
     @WebMethod
     boolean addEvent(
-        @WebParam(name = "name") String name,
-        @WebParam(name = "type") String type,
-        @WebParam(name = "date") String date,
-        @WebParam(name = "week") int week,
-        @WebParam(name = "month") int month,
-        @WebParam(name = "year") int year,
-        @WebParam(name = "description") String description
-    );
+            @WebParam(name = "name") String name,
+            @WebParam(name = "type") String type,
+            @WebParam(name = "date") String date,
+            @WebParam(name = "week") int week,
+            @WebParam(name = "month") int month,
+            @WebParam(name = "year") int year,
+            @WebParam(name = "description") String description);
 
     @WebMethod
     boolean updateEvent(
-        @WebParam(name = "id") int id,
-        @WebParam(name = "name") String name,
-        @WebParam(name = "type") String type,
-        @WebParam(name = "date") String date,
-        @WebParam(name = "week") int week,
-        @WebParam(name = "month") int month,
-        @WebParam(name = "year") int year,
-        @WebParam(name = "description") String description
-    );
+            @WebParam(name = "id") int id,
+            @WebParam(name = "name") String name,
+            @WebParam(name = "type") String type,
+            @WebParam(name = "date") String date,
+            @WebParam(name = "week") int week,
+            @WebParam(name = "month") int month,
+            @WebParam(name = "year") int year,
+            @WebParam(name = "description") String description);
 
     @WebMethod
     List<Event> getAllEvents();
@@ -61,18 +56,16 @@ public interface BialystokEventService {
 
     @WebMethod
     boolean deleteEvent(
-        @WebParam(name = "id") int id
-    );
+            @WebParam(name = "id") int id);
 
     @WebMethod
     boolean submitProposal(
-        @WebParam(name = "name") String name,
-        @WebParam(name = "type") String type,
-        @WebParam(name = "date") String date,
-        @WebParam(name = "description") String description,
-        @WebParam(name = "organizerName") String organizerName,
-        @WebParam(name = "contactEmail") String contactEmail
-    );
+            @WebParam(name = "name") String name,
+            @WebParam(name = "type") String type,
+            @WebParam(name = "date") String date,
+            @WebParam(name = "description") String description,
+            @WebParam(name = "organizerName") String organizerName,
+            @WebParam(name = "contactEmail") String contactEmail);
 
     @WebMethod
     List<EventProposal> getProposals();
@@ -85,5 +78,5 @@ public interface BialystokEventService {
 
     @WebMethod
     @XmlMimeType("application/pdf")
-    DataHandler getEventSummaryPdf();
+    byte[] getEventSummaryPdf();
 }

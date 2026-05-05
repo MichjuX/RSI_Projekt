@@ -20,13 +20,21 @@ Serwis udostępnia następujące funkcje:
 
 ## 2. Instrukcja Uruchomienia i Kompilacji
 
-### Krok 1: Serwer Java
+### Krok 1: Serwer Java (Opcja A - Lokalnie przez Maven)
 1. Należy wygenerować certyfikat SSL do obsługi HTTPS. W głównym katalogu uruchom skrypt:
    `generate_keystore.bat` (stworzy to plik `keystore.jks`).
 2. Upewnij się, że posiadasz zainstalowanego Mavena (narzędzie `mvn`). Skompiluj projekt:
    `mvn clean install`
 3. Uruchom serwer (np. z poziomu IDE klasy `com.bialystok.events.Server` lub z użyciem narzędzia Maven):
    `mvn exec:java -Dexec.mainClass="com.bialystok.events.Server"`
+
+### Krok 1: Serwer Java i Klient (Opcja B - Docker Compose - ZALECANE)
+Projekt został skonteneryzowany, więc możesz uruchomić wszystkie serwisy (w tym klienta webowego) za pomocą jednej komendy.
+1. Upewnij się, że masz zainstalowanego **Dockera** oraz **docker-compose**.
+2. W głównym katalogu uruchom skrypt `generate_keystore.bat` (jeśli plik `keystore.jks` jeszcze nie istnieje).
+3. Wykonaj komendę w głównym katalogu projektu:
+   `docker-compose up -d --build`
+4. Po wdrożeniu, serwer SOAP będzie dostępny na porcie `8443`, a klient webowy na porcie `5000`. W razie edycji plików źródłowych, każdorazowo używaj flagi `--build`, aby przebudować kod źródłowy wewnątrz kontenera.
 
 ### Krok 2: Klient Python (Aplikacja Webowa)
 1. Wejdź do katalogu `client`.
@@ -36,16 +44,14 @@ Serwis udostępnia następujące funkcje:
    `python app.py`
 4. Aplikacja dostępna jest pod adresem: `http://127.0.0.1:5000/`
 
-## 3. Prezentacja na 2 komputerach (lub Maszynie Wirtualnej)
-Aby zaprezentować projekt na 2 maszynach:
-1. Upewnij się, że oba komputery są w tej samej sieci (np. podłączone do tego samego Wi-Fi).
-2. Na Komputerze 1 (Serwer), odczytaj jego lokalny adres IP (komenda `ipconfig` w CMD na Windows). Powiedzmy, że jest to `192.168.1.50`.
-3. Na Komputerze 1 uruchom serwer Java tak jak opisano wyżej. Serwer domyślnie nasłuchuje na wszystkich interfejsach sieciowych, lub można w kodzie klasy `Server` zamienić `"localhost"` na `"0.0.0.0"`.
-4. Upewnij się, że firewall w Komputerze 1 przepuszcza ruch na porcie TCP `8443`.
-5. Na Komputerze 2 (Klient), otwórz plik `app.py` i zamień linię definiującą WSDL z:
-   `WSDL_URL = 'https://localhost:8443/ws/events?wsdl'`
-   na:
-   `WSDL_URL = 'https://192.168.1.50:8443/ws/events?wsdl'`
+## 3. Prezentacja na 2 komputerach (lub przez sieć VPN np. ZeroTier)
+Aby zaprezentować projekt na 2 maszynach lub klientowi zewnętrznemu:
+1. Upewnij się, że oba komputery są w tej samej sieci (np. to samo Wi-Fi lub podłączone do tej samej wirtualnej sieci LAN poprzez klienta ZeroTier).
+2. Na Komputerze 1 (Serwer), odczytaj jego przypisany adres IP (komenda `ipconfig` w CMD na Windows lub adres przyznany przez interfejs ZeroTier). Powiedzmy, że jest to `192.168.1.50` lub `10.147.x.x`.
+3. Komponenty serwerowe (zarówno w Dockerze jak i klasa `Server.java`) zostały skonfigurowane tak, aby domyślnie nasłuchiwać na adresie `0.0.0.0`, dzięki czemu usługa przyjmuje zapytania z każdego interfejsu sieciowego (w tym wirtualnych kart sieciowych VPN).
+4. Upewnij się, że firewall w Komputerze 1 przepuszcza ruch przychodzący na porty `8443` oraz `8444`.
+5. Na Komputerze 2 (Klient), upewnij się, że klient webowy korzysta z poprawnego zewnętrznego adresu WSDL (możesz go podmienić w `.env` lub wprost w kodzie, jeśli uruchamiasz to lokalnie):
+   `EVENTS_WSDL_URL='https://192.168.1.50:8443/ws/events?wsdl'`
 6. Uruchom klienta na Komputerze 2 i korzystaj z aplikacji.
 
 ## 4. Prezentacja z użyciem Monitora (tcpmonitor / SOAP UI)

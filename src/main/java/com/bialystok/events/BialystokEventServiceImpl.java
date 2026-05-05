@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.xml.ws.soap.MTOM;
+
 @WebService(endpointInterface = "com.bialystok.events.BialystokEventService")
+@MTOM(threshold = 0)
 public class BialystokEventServiceImpl implements BialystokEventService {
 
     private static final Path DATA_FILE = Path.of("events.json");
@@ -207,38 +210,68 @@ public class BialystokEventServiceImpl implements BialystokEventService {
     }
 
     @Override
-    public DataHandler getEventSummaryPdf() {
+    @javax.xml.bind.annotation.XmlMimeType("application/pdf")
+    public byte[] getEventSummaryPdf() {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
             document.addPage(page);
 
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
-                contentStream.newLineAtOffset(50, 700);
-                contentStream.showText("Zestawienie Wydarzen - Bialystok");
-                contentStream.endText();
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
+            contentStream.newLineAtOffset(50, 700);
+            contentStream.showText("Zestawienie Wydarzen - Bialystok");
+            contentStream.endText();
 
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
-                contentStream.newLineAtOffset(50, 670);
-                
-                int yOffset = 670;
-                for (Event event : events) {
-                    if (yOffset < 100) break;
-                    String text = "- " + event.getName() + " (" + event.getDate() + ")";
-                    contentStream.showText(sanitizeForPdf(text));
-                    contentStream.newLineAtOffset(0, -20);
-                    yOffset -= 20;
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.newLineAtOffset(50, 670);
+            
+            int yOffset = 670;
+            for (Event event : events) {
+                if (yOffset < 100) {
+                    contentStream.endText();
+                    contentStream.close();
+                    
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    contentStream.beginText();
+                    contentStream.setFont(PDType1Font.HELVETICA, 12);
+                    contentStream.newLineAtOffset(50, 700);
+                    yOffset = 700;
                 }
-                contentStream.endText();
+                String text = "- " + event.getName() + " (" + event.getDate() + ")";
+                contentStream.showText(sanitizeForPdf(text));
+                contentStream.newLineAtOffset(0, -20);
+                yOffset -= 20;
             }
+
+            // Dodanie sztucznego wypelnienia, zeby plik przekroczyl 2KB
+            for(int i=0; i<50; i++) {
+                if (yOffset < 100) {
+                    contentStream.endText();
+                    contentStream.close();
+                    
+                    page = new PDPage();
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    contentStream.beginText();
+                    contentStream.setFont(PDType1Font.HELVETICA, 12);
+                    contentStream.newLineAtOffset(50, 700);
+                    yOffset = 700;
+                }
+                contentStream.showText("Linijka wypelniajaca MTOM threshold test " + i + " zeby plik wazyl ponad 1024 bajty.");
+                contentStream.newLineAtOffset(0, -20);
+                yOffset -= 20;
+            }
+            contentStream.endText();
+            contentStream.close();
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             document.save(baos);
 
-            ByteArrayDataSource dataSource = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
-            return new DataHandler(dataSource);
+            return baos.toByteArray();
 
         } catch (IOException e) {
             e.printStackTrace();

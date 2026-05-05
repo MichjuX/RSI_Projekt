@@ -29,7 +29,8 @@ public class Server {
             } catch (Exception e) {
                 System.err.println("Failed to load keystore.jks. Please run generate_keystore.bat first.");
                 System.err.println("Fallback to HTTP (not recommended).");
-                Endpoint.publish("http://localhost:8080/ws/events", new BialystokEventServiceImpl());
+                Endpoint fallbackEndpoint = Endpoint.create(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, new BialystokEventServiceImpl(), new javax.xml.ws.soap.MTOMFeature(true, 0));
+                fallbackEndpoint.publish("http://localhost:8080/ws/events");
                 System.out.println("Service started at http://localhost:8080/ws/events?wsdl");
                 return;
             }
@@ -47,7 +48,7 @@ public class Server {
             HttpContext httpContext = httpsServer.createContext("/ws/events");
             httpsServer.start();
 
-            Endpoint endpoint = Endpoint.create(new BialystokEventServiceImpl());
+            Endpoint endpoint = Endpoint.create(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, new BialystokEventServiceImpl(), new javax.xml.ws.soap.MTOMFeature(true, 0));
             endpoint.publish(httpContext);
 
             System.out.println("HTTPS Web Service is running!");
