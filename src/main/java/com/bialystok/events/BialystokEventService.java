@@ -57,6 +57,33 @@ public interface BialystokEventService {
     List<Event> getAllEvents();
 
     @WebMethod
+    List<Event> getUpcomingEvents();
+
+    @WebMethod
+    boolean deleteEvent(
+        @WebParam(name = "id") int id
+    );
+
+    @WebMethod
+    boolean submitProposal(
+        @WebParam(name = "name") String name,
+        @WebParam(name = "type") String type,
+        @WebParam(name = "date") String date,
+        @WebParam(name = "description") String description,
+        @WebParam(name = "organizerName") String organizerName,
+        @WebParam(name = "contactEmail") String contactEmail
+    );
+
+    @WebMethod
+    List<EventProposal> getProposals();
+
+    @WebMethod
+    boolean approveProposal(@WebParam(name = "id") int id);
+
+    @WebMethod
+    boolean rejectProposal(@WebParam(name = "id") int id);
+
+    @WebMethod
     @XmlMimeType("application/pdf")
     DataHandler getEventSummaryPdf();
 }

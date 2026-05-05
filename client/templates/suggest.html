@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Zglos wydarzenie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% include '_navbar.html' %}
+<div class="container" style="max-width:600px">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+        <div class="alert alert-success">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h4>Zglos wydarzenie</h4>
+    <p class="text-muted">Wypelnij formularz, a administrator rozpatrzy Twoje zgloszenie.</p>
+
+    <form method="post" class="card p-3">
+        <div class="mb-2">
+            <label class="form-label">Nazwa wydarzenia</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Typ</label>
+            <select name="type" class="form-select" required>
+                <option value="">-- wybierz --</option>
+                <option>Kultura</option>
+                <option>Sport</option>
+                <option>Festiwal</option>
+                <option>Edukacja</option>
+                <option>Inne</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Data</label>
+            <input type="date" name="date" class="form-control" required>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Opis</label>
+            <textarea name="description" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Imie i nazwisko organizatora <span class="text-muted small">(opcjonalne)</span></label>
+            <input type="text" name="organizerName" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email kontaktowy <span class="text-muted small">(opcjonalne)</span></label>
+            <input type="email" name="contactEmail" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Wyslij zgloszenie</button>
+        <a href="/" class="btn btn-secondary ms-2">Anuluj</a>
+    </form>
+</div>
+</body>
+</html>

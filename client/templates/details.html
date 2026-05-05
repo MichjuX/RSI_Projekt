@@ -1,55 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Szczegóły Wydarzenia</title>
+    <title>Szczegoly wydarzenia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container mt-5">
-    <a href="/" class="btn btn-secondary mb-3">&laquo; Powrót</a>
-    
-    <h2>Edycja Wydarzenia #{{ event.id }}</h2>
+<body>
+{% include '_navbar.html' %}
+<div class="container">
+
+    <a href="/" class="btn btn-secondary mb-3">Powrot</a>
 
     {% if weather %}
     <div class="alert alert-info">Pogoda w dniu {{ event.date }}: <strong>{{ weather }}</strong></div>
     {% endif %}
-    
-    <form action="/update/{{ event.id }}" method="post" class="card p-4">
-        <div class="row mb-3">
+
+    {% if session.is_admin %}
+
+    <h4>Edycja wydarzenia #{{ event.id }}</h4>
+    <form action="/update/{{ event.id }}" method="post" class="card p-3">
+        <div class="row g-2 mb-2">
             <div class="col">
-                <label>Nazwa</label>
+                <label class="form-label">Nazwa</label>
                 <input type="text" name="name" class="form-control" value="{{ event.name }}" required>
             </div>
             <div class="col">
-                <label>Typ</label>
+                <label class="form-label">Typ</label>
                 <input type="text" name="type" class="form-control" value="{{ event.type }}" required>
             </div>
         </div>
-        <div class="row mb-3">
+        <div class="row g-2 mb-2">
             <div class="col">
-                <label>Data</label>
+                <label class="form-label">Data</label>
                 <input type="date" name="date" class="form-control" value="{{ event.date }}" required>
             </div>
             <div class="col">
-                <label>Tydzień</label>
-                <input type="number" name="week" class="form-control" value="{{ event.week }}" required>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col">
-                <label>Miesiąc</label>
-                <input type="number" name="month" class="form-control" value="{{ event.month }}" required>
+                <label class="form-label">Tydzien (opcjonalne)</label>
+                <input type="number" name="week" class="form-control" value="{{ event.week }}">
             </div>
             <div class="col">
-                <label>Rok</label>
-                <input type="number" name="year" class="form-control" value="{{ event.year }}" required>
+                <label class="form-label">Miesiac (opcjonalne)</label>
+                <input type="number" name="month" class="form-control" value="{{ event.month }}">
+            </div>
+            <div class="col">
+                <label class="form-label">Rok (opcjonalne)</label>
+                <input type="number" name="year" class="form-control" value="{{ event.year }}">
             </div>
         </div>
-        <div class="mb-3">
-            <label>Opis</label>
+        <div class="mb-2">
+            <label class="form-label">Opis</label>
             <textarea name="description" class="form-control" rows="3" required>{{ event.description }}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Zapisz Zmiany</button>
+        <button type="submit" class="btn btn-primary">Zapisz</button>
     </form>
+
+    <form action="/delete/{{ event.id }}" method="post" class="mt-2"
+          onsubmit="return confirm('Usunac to wydarzenie?')">
+        <button type="submit" class="btn btn-danger">Usun wydarzenie</button>
+    </form>
+
+    {% else %}
+
+    <h4>{{ event.name }}</h4>
+    <table class="table table-bordered" style="max-width:500px">
+        <tr><th>Typ</th><td>{{ event.type }}</td></tr>
+        <tr><th>Data</th><td>{{ event.date }}</td></tr>
+        <tr><th>Tydzien</th><td>{{ event.week }}</td></tr>
+        <tr><th>Miesiac</th><td>{{ event.month }}</td></tr>
+        <tr><th>Rok</th><td>{{ event.year }}</td></tr>
+        <tr><th>Opis</th><td>{{ event.description }}</td></tr>
+    </table>
+
+    {% endif %}
+
+</div>
 </body>
 </html>

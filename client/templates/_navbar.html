@@ -1,0 +1,14 @@
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Serwis Bialystoku</a>
+    <div>
+      <a href="/" class="btn btn-sm btn-outline-light me-1">Strona glowna</a>
+      <a href="/suggest" class="btn btn-sm btn-outline-light me-1">Zglos wydarzenie</a>
+        <a href="/proposals" class="btn btn-sm btn-outline-light me-1">Propozycje</a>
+        <a href="/logout" class="btn btn-sm btn-outline-danger">Wyloguj</a>
+      {% else %}
+        <a href="/login" class="btn btn-sm btn-outline-warning">Panel Admina</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>

@@ -5,6 +5,7 @@ services:
       - "8443:8443"
     volumes:
       - ./events.json:/app/events.json
+      - ./proposals.json:/app/proposals.json
 
   weather-service:
     build: ./weather-service
