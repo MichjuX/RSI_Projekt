@@ -4,6 +4,7 @@
     <div>
       <a href="/" class="btn btn-sm btn-outline-light me-1">Strona glowna</a>
       <a href="/suggest" class="btn btn-sm btn-outline-light me-1">Zglos wydarzenie</a>
+      {% if session.is_admin %}
         <a href="/proposals" class="btn btn-sm btn-outline-light me-1">Propozycje</a>
         <a href="/logout" class="btn btn-sm btn-outline-danger">Wyloguj</a>
       {% else %}
